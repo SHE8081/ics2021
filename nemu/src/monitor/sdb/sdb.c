@@ -41,7 +41,7 @@ static int cmd_help(char *args);
 
 static int cmd_si(char *args){
   if(NULL != args){
-      uint64_t n = (uint64_t) (*args);
+       int n = atoi (args);
       cpu_exec(n);
       return 0;
   }
