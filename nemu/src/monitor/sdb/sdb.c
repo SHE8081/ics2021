@@ -39,6 +39,12 @@ static int cmd_q(char *args) {
 
 static int cmd_help(char *args);
 
+static int cmd_si(char *args){
+  uint64_t n = (uint64_t) (*args);
+  cpu_exec(n);
+  return 0;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -47,6 +53,7 @@ static struct {
   { "help", "Display informations about all supported commands", cmd_help },
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
+  {"si n","Excute  n steps. If not specify n, default number is 1",cmd_si},
 
   /* TODO: Add more commands */
 
