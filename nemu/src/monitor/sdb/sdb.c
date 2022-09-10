@@ -40,9 +40,12 @@ static int cmd_q(char *args) {
 static int cmd_help(char *args);
 
 static int cmd_si(char *args){
-  uint64_t n = (uint64_t) (*args);
-  cpu_exec(n);
-  return 0;
+  if(NULL != args){
+      uint64_t n = (uint64_t) (*args);
+      cpu_exec(n);
+      return 0;
+  }
+  return -1;
 }
 
 static struct {
