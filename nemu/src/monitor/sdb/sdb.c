@@ -110,6 +110,8 @@ void sdb_mainloop() {
     char *args = cmd + strlen(cmd) + 1;
     if (args >= str_end) {
       args = NULL;
+    }else{
+      args = strtok(NULL, " ");
     }
 
 #ifdef CONFIG_DEVICE
