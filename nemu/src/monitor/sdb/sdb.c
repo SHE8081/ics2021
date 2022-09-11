@@ -71,7 +71,7 @@ static int cmd_x(char *args){
   paddr_t *base = NULL;
   u_short n = 0;
   n = atoi(strtok(args," "));
-  base = (paddr_t *)(strtok(NULL, " "));
+  base = (paddr_t *)(strtok(NULL, " 0x"));
   if (NULL != base)
   {
     do
