@@ -3,6 +3,7 @@
 #include <readline/readline.h>
 #include <readline/history.h>
 #include "sdb.h"
+#include <memory/paddr.h>
 
 static int is_batch_mode = false;
 
@@ -62,6 +63,26 @@ static int cmd_info(char *args){
     return -1;
 }
 
+static int cmd_x(char *args){
+ /*
+  args is address of arguments
+  further parsing
+ */ 
+  paddr_t *base = NULL;
+  u_short n = 0;
+  n = atoi(strtok(args," "));
+  base = (paddr_t *)(strtok(NULL, " "));
+  if (NULL != base)
+  {
+    do
+    {  n=n-1; 
+       printf("address=%p, value=%c\n" ,base ,paddr_read(*base,4));
+    } while (n>1);
+   return 0;   
+  }
+  return -1;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -72,6 +93,7 @@ static struct {
   { "q", "Exit NEMU", cmd_q },
   {"si","Excute  n steps. If not specify n, default number is 1",cmd_si},
   {"info","Dispaly informations of regsters or watchpoint",cmd_info},
+  {"x","Display N word of memery content",cmd_x},
   /* TODO: Add more commands */
 
 };
