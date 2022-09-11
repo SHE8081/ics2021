@@ -48,6 +48,20 @@ static int cmd_si(char *args){
   return -1;
 }
 
+static int cmd_info(char *args){
+  /*"r" means  register
+    "w" means watchpoint
+  */
+  char *info[]={"r","w"};
+  if(strcmp(args,info[0]) == 0){
+    isa_reg_display();
+    return 0;
+  }else if(strcmp(args,info[1])== 0){
+    return 0;
+  }
+    return -1;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -57,7 +71,7 @@ static struct {
   { "c", "Continue the execution of the program", cmd_c },
   { "q", "Exit NEMU", cmd_q },
   {"si","Excute  n steps. If not specify n, default number is 1",cmd_si},
-
+  {"info","Dispaly informations of regsters or watchpoint",cmd_info},
   /* TODO: Add more commands */
 
 };
