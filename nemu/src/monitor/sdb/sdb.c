@@ -74,7 +74,6 @@ static int cmd_x(char *args){
   n = atoi(base);
   base = strtok(NULL, " ");
   printf("base=%s, n=%d\n",base,n);
-  /*
   if (NULL != base)
   {
     do
@@ -83,7 +82,6 @@ static int cmd_x(char *args){
     } while (n>1);
    return 0;   
   }
-  */
   return -1;
 }
 
@@ -150,8 +148,6 @@ void sdb_mainloop() {
     char *args = cmd + strlen(cmd) + 1;
     if (args >= str_end) {
       args = NULL;
-    }else{
-      args = strtok(NULL, " ");
     }
 
 #ifdef CONFIG_DEVICE
