@@ -76,7 +76,7 @@ static int cmd_x(char *args){
   {
     do
     {  n=n-1; 
-       printf("address=%p, value=%c\n" ,address ,paddr_read(*address,4));
+       printf("address=%s, value=%d\n" ,address ,paddr_read(atol(address),4));
     } while (n>1);
    return 0;   
   }
