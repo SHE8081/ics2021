@@ -70,7 +70,8 @@ static int cmd_x(char *args){
  */ 
   char *base = NULL;
   u_short n = 0;
-  n = atoi(strtok(args," "));
+  base= strtok(args," ");
+  n = atoi(base);
   base = strtok(NULL, " 0x");
   printf("base=%s, n=%d\n",base,n);
   /*
