@@ -65,20 +65,18 @@ static int cmd_info(char *args){
 
 static int cmd_x(char *args){
  /*
-  args is address of arguments
-  further parsing
+  N of 4 words from address
+  x N expr
  */ 
-  char *base = NULL;
-  u_short n = 0;
-  base= strtok(args," ");
-  n = atoi(base);
-  base = strtok(NULL, " ");
-  printf("base=%s, n=%d\n",base,n);
-  if (NULL != base)
+  char *address = NULL;
+  u_short n =atoi(strtok(args," "));
+  address = strtok(NULL, " ");
+  printf("address=%s, n=%d\n", address,n);
+  if (NULL != address && n>0)
   {
     do
     {  n=n-1; 
-       printf("address=%p, value=%c\n" ,base ,paddr_read(*base,4));
+       printf("address=%p, value=%c\n" ,address ,paddr_read(*address,4));
     } while (n>1);
    return 0;   
   }
