@@ -68,10 +68,12 @@ static int cmd_x(char *args){
   args is address of arguments
   further parsing
  */ 
-  paddr_t *base = NULL;
+  char *base = NULL;
   u_short n = 0;
   n = atoi(strtok(args," "));
-  base = (paddr_t *)(strtok(NULL, " 0x"));
+  base = strtok(NULL, " 0x");
+  printf("base=%s, n=%d\n",base,n);
+  /*
   if (NULL != base)
   {
     do
@@ -80,6 +82,7 @@ static int cmd_x(char *args){
     } while (n>1);
    return 0;   
   }
+  */
   return -1;
 }
 
