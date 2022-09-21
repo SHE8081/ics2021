@@ -83,6 +83,16 @@ static int cmd_x(char *args){
   return -1;
 }
 
+static int cmd_p(char *args){
+  assert(NULL != args);
+  bool success= true;
+  expr(args,&success);
+  if(success == true){
+    return 0;
+  }
+  return -1;
+}
+
 static struct {
   const char *name;
   const char *description;
@@ -94,6 +104,7 @@ static struct {
   {"si","Excute  n steps. If not specify n, default number is 1",cmd_si},
   {"info","Dispaly informations of regsters or watchpoint",cmd_info},
   {"x","Display N word of memery content",cmd_x},
+  {"p","Print the value of expr",cmd_p},
   /* TODO: Add more commands */
 
 };

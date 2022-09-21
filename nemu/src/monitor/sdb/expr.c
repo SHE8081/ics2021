@@ -5,12 +5,17 @@
  */
 #include <regex.h>
 
-enum {
+enum token_type {
   TK_NOTYPE = 256, TK_EQ,
 
   /* TODO: Add more token types */
+  /* + - x * /*/
+  TK_ADD=43,TK_SUB,TK_MUL,TK_DIV,
+  /* = ( )*/
+  TK_ASSGIN,TK_LP,TK_RP,
+  TK_NUM,
+} ;
 
-};
 
 static struct rule {
   const char *regex;
@@ -50,6 +55,7 @@ void init_regex() {
 typedef struct token {
   int type;
   char str[32];
+  int prority;
 } Token;
 
 static Token tokens[32] __attribute__((used)) = {};
@@ -80,22 +86,31 @@ static bool make_token(char *e) {
          */
 
         switch (rules[i].token_type) {
-          default: TODO();
+          case TK_NOTYPE:break;    
+          case TK_ADD:tokens[nr_token].type=TK_ADD;tokens[nr_token].prority=1; break;
+          case TK_ASSGIN :tokens[nr_token].type=TK_ASSGIN; break;
+          case TK_DIV : tokens[nr_token].type=TK_DIV;tokens[nr_token].prority=2;break;
+          case TK_EQ : tokens[nr_token].type=TK_EQ;break;
+          case TK_LP : tokens[nr_token].type=TK_LP;break;
+          case TK_MUL :tokens[nr_token].type=TK_MUL;tokens[nr_token].prority=2;break;
+          case TK_RP :tokens[nr_token].type=TK_RP;break;
+          case TK_SUB : tokens[nr_token].type=TK_SUB;tokens[nr_token].prority=1;break;
+          default: printf("Unkown token type!");
         }
-
-        break;
+        strcpy(tokens[nr_token].str,substr_start);
+        nr_token = nr_token + 1;
       }
     }
-
     if (i == NR_REGEX) {
       printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
       return false;
     }
   }
-
   return true;
 }
 
+uint32_t eval(Token *p ,Token *q);
+bool check_parentheses(Token *p, Token *q);
 
 word_t expr(char *e, bool *success) {
   if (!make_token(e)) {
@@ -105,6 +120,69 @@ word_t expr(char *e, bool *success) {
 
   /* TODO: Insert codes to evaluate the expression. */
   TODO();
+  
 
-  return 0;
+  return  eval(&tokens[0],&tokens[nr_token]);
+}
+
+bool check_parentheses(Token *p, Token *q){
+ while(p->type==TK_RP && p->type==TK_RP)
+ {
+   p = p-1;
+   q = q-1;
+ } 
+ if(p == q){
+   return true;
+ }else
+  return false;
+}
+
+int find_op (Token *token);
+uint32_t eval(Token *p ,Token *q){ 
+  if (p > q) {
+    /* Bad expression */
+    return -1;
+  }
+  else if (p == q) {
+    /* Single token.
+     * For now this token should be a number.
+     * Return the value of the number.
+     */
+    assert(p->type==TK_NUM&&q->type==TK_NUM);
+    return atoi(p->str);
+  }
+  else if (check_parentheses(p, q) == true) {
+    /* The expression is surrounded by a matched pair of parentheses.
+     * If that is the case, just throw away the parentheses.
+     */
+    return eval(p + 1, q - 1);
+  }
+  else {
+   int pos = find_op(tokens);
+   uint32_t val1 = eval(p, p+pos-1);
+   uint32_t val2 = eval(p+pos+1, q);
+
+    switch (tokens[pos].type) {
+      case TK_ADD: return val1 + val2;break;
+      case TK_SUB: return val1 - val2;break;
+      case TK_MUL: return val1 * val2;break;
+      case TK_DIV: return val1 / val2;break;
+      default: assert(0);
+    }
+  }
+}
+
+int find_op (Token *token){
+  int pos = 0;    //position of main oprand
+  int prority = 10;
+  for (int i = nr_token; i > 0 ; i --){    //i is length of tokens
+    if(token[i].type == TK_ADD || token[i].type  == TK_SUB || token[i].type  == TK_MUL || token[i].type  == TK_DIV){
+      if(token[pos].prority < prority) 
+      {
+        prority = token[i].prority;
+        pos = i;
+      }
+    }
+  }
+  return pos;
 }

@@ -15,9 +15,60 @@ static char *code_format =
 "  printf(\"%%u\", result); "
 "  return 0; "
 "}";
+static void gen_num()
+{
+  int r = rand()%UINT8_MAX;
+  char *p = buf;
+  while ((*p)!='\0')
+  {
+    p = p + 1;
+  }
+  snprintf(p,6,"%d",r);
+  p = p+6;
+  *p = '\0';
+}
 
+static void gen(char c)
+{
+  char *p = buf;
+  while ((*p)!='\0')
+  {
+    p = p + 1;
+  }
+  *p = c;
+  p = p+1;
+  *p = '\0';
+}
+
+static int choose(int n)
+{
+  return rand() % n;
+}
+static void gen_rand_op()
+{
+  char c;
+  switch (choose(4)) {
+      case 0:  c='+'; break;
+      case 1:  c='-'; break;
+      case 2:  c='*'; break;
+      default: c='/';  break;
+  } 
+  gen(c);
+}
+  //递归深度限制为10，防止最后结果太大越界
+static int rdepth = 10;
 static void gen_rand_expr() {
-  buf[0] = '\0';
+if(rdepth>0){
+    switch (choose(3)) {
+      case 0: gen_num();rdepth--; break;
+      case 1: gen('('); gen_rand_expr(); gen(')');rdepth--; break;
+      default: gen_rand_expr(); gen_rand_op(); gen_rand_expr();rdepth--; break;
+  }
+}
+else{
+  gen_num();
+}
+  
 }
 
 int main(int argc, char *argv[]) {
@@ -30,9 +81,7 @@ int main(int argc, char *argv[]) {
   int i;
   for (i = 0; i < loop; i ++) {
     gen_rand_expr();
-
     sprintf(code_buf, code_format, buf);
-
     FILE *fp = fopen("/tmp/.code.c", "w");
     assert(fp != NULL);
     fputs(code_buf, fp);
@@ -49,6 +98,10 @@ int main(int argc, char *argv[]) {
     pclose(fp);
 
     printf("%u %s\n", result, buf);
-  }
+     //reset first character of buf array,for next reuse.
+    buf[0] = '\0';
+    rdepth = 10;
+   }
+  
   return 0;
 }
