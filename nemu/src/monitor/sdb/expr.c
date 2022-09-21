@@ -94,10 +94,11 @@ static bool make_token(char *e) {
           case TK_ASSGIN :tokens[nr_token].type=TK_ASSGIN; break;
           case TK_DIV : tokens[nr_token].type=TK_DIV;tokens[nr_token].prority=2;break;
           case TK_EQ : tokens[nr_token].type=TK_EQ;break;
-          case TK_LP : tokens[nr_token].type=TK_LP;break;
+          case TK_LP : tokens[nr_token].type=TK_LP;tokens[nr_token].prority=3; break;
           case TK_MUL :tokens[nr_token].type=TK_MUL;tokens[nr_token].prority=2;break;
-          case TK_RP :tokens[nr_token].type=TK_RP;break;
+          case TK_RP :tokens[nr_token].type=TK_RP;tokens[nr_token].prority=3;break;
           case TK_SUB : tokens[nr_token].type=TK_SUB;tokens[nr_token].prority=1;break;
+          case TK_NUM : tokens[nr_token].type=TK_NUM;tokens[nr_token].prority=0;break; 
           default: printf("Unkown token type!");
         }
         strcpy(tokens[nr_token].str,substr_start);
@@ -140,7 +141,7 @@ bool check_parentheses(Token *p, Token *q){
   return false;
 }
 
-int find_op (Token *token);
+Token *  find_main_op(Token * ,Token*);
 uint32_t eval(Token *p ,Token *q){ 
   if (p > q) {
     /* Bad expression */
@@ -161,11 +162,11 @@ uint32_t eval(Token *p ,Token *q){
     return eval(p + 1, q - 1);
   }
   else {
-   int pos = find_op(tokens);
-   uint32_t val1 = eval(p, p+pos-1);
-   uint32_t val2 = eval(p+pos+1, q);
+   Token *pos = find_main_op(p,q);
+   uint32_t val1 = eval(p, pos-1);
+   uint32_t val2 = eval(pos+1, q);
 
-    switch (tokens[pos].type) {
+    switch (pos->type) {
       case TK_ADD: return val1 + val2;break;
       case TK_SUB: return val1 - val2;break;
       case TK_MUL: return val1 * val2;break;
@@ -175,17 +176,49 @@ uint32_t eval(Token *p ,Token *q){
   }
 }
 
-int find_op (Token *token){
-  int pos = 0;    //position of main oprand
-  int prority = 10;
-  for (int i = nr_token; i > 0 ; i --){    //i is length of tokens
-    if(token[i].type == TK_ADD || token[i].type  == TK_SUB || token[i].type  == TK_MUL || token[i].type  == TK_DIV){
-      if(token[pos].prority < prority) 
-      {
-        prority = token[i].prority;
-        pos = i;
-      }
+/**
+ * @brief 从左边查找第一个运算符
+ * 返回运算符地址
+ */
+Token * find__from_left(Token *t){
+  if (t->type >= TK_ADD && t->type<=TK_DIV)
+  {
+    return t;
+  }
+  else
+    return t+1;  
+}
+
+/**
+ * @brief 从右边查找第一个运算符
+ * 返回运算符地址
+ */
+Token * find__from_right(Token *t){
+  if (t->type >= TK_ADD && t->type<=TK_DIV)
+  {
+    return t;
+  }
+  else
+    return t-1;  
+}
+
+Token * find_main_op (Token *p, Token *q){
+  if(p->prority >= q->prority){
+    p = p + 1;
+    find__from_left(p);
+    if(p != q){
+     find_main_op(p,q); 
+    }
+  }else{
+    q = q - 1;
+    find__from_right(q);
+    if(p != q){
+      find_main_op(p,q);
     }
   }
-  return pos;
+  if(p!=q){
+    printf("为寻找到主运算符!");
+    assert(p!=q);
+  }
+  return p;
 }
