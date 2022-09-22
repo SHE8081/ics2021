@@ -75,10 +75,10 @@ static bool make_token(char *e) {
 
   nr_token = 0;
 
+   //record last 
+  int pre_t = TK_NOTYPE;
+  int rep = 0;
   while (e[position] != '\0') {
-    //record last 
-    int pre_t = TK_NOTYPE;
-    int rep = 0;
     i = 0;
     /* Try all rules one by one. */
     for (; i < NR_REGEX; i ++) {
