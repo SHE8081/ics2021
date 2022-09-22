@@ -14,7 +14,7 @@ enum token_type {
   /* = ( )*/
   TK_ASSGIN,TK_LP,TK_RP,
   TK_NUM,
-} ;
+} t_type ;
 
 
 static struct rule {
@@ -76,8 +76,12 @@ static bool make_token(char *e) {
   nr_token = 0;
 
   while (e[position] != '\0') {
+    //record last 
+    int pre_t = TK_NOTYPE;
+    int rep = 0;
+    i = 0;
     /* Try all rules one by one. */
-    for (i = 0; i < NR_REGEX; i ++) {
+    for (; i < NR_REGEX; i ++) {
       if (regexec(&re[i], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0) {
         char *substr_start = e + position;
         int substr_len = pmatch.rm_eo;
@@ -97,56 +101,60 @@ static bool make_token(char *e) {
           case TK_ADD:
               tokens[nr_token].type=TK_ADD;tokens[nr_token].prority=1; 
               tokens[nr_token].str[0] = *substr_start;
+              pre_t = TK_ADD;
               nr_token = nr_token + 1; break;
           case TK_ASSGIN :
               tokens[nr_token].type=TK_ASSGIN;
               tokens[nr_token].str[0] = *substr_start;
+              pre_t = TK_ASSGIN;
               nr_token = nr_token + 1;break;
           case TK_DIV : 
               tokens[nr_token].type=TK_DIV;tokens[nr_token].prority=2;
               tokens[nr_token].str[0] = *substr_start;
+              pre_t = TK_DIV;
               nr_token = nr_token + 1;break;
           case TK_EQ : 
               tokens[nr_token].type=TK_EQ;
               tokens[nr_token].str[0] = *substr_start;
+              pre_t = TK_EQ;
               nr_token = nr_token + 1;
               break;
           case TK_LP : 
               tokens[nr_token].type=TK_LP;tokens[nr_token].prority=3; 
               tokens[nr_token].str[0] = *substr_start;
+              pre_t = TK_LP;
               nr_token = nr_token + 1;
               break;
           case TK_MUL :
               tokens[nr_token].type=TK_MUL;tokens[nr_token].prority=2;
               tokens[nr_token].str[0] = *substr_start;
+              pre_t = TK_MUL;
               nr_token = nr_token + 1;
               break;
           case TK_RP :
               tokens[nr_token].type=TK_RP;tokens[nr_token].prority=3;
               tokens[nr_token].str[0] = *substr_start;
+              pre_t = TK_RP;
               nr_token = nr_token + 1;
               break;
           case TK_SUB :   
               tokens[nr_token].type=TK_SUB;tokens[nr_token].prority=1;
               tokens[nr_token].str[0] = *substr_start;
+              pre_t = TK_SUB;
               nr_token = nr_token + 1;
               break;
           case TK_NUM : 
               tokens[nr_token].type=TK_NUM;tokens[nr_token].prority=0;
-              //记录后续匹配开始的位置
-              int start_position = position-substr_len;
-              //验证下一个位置是否是数字
-              while(regexec(&re[3], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0){
-                substr_len = pmatch.rm_eo;
-                position += substr_len ;
+              if (pre_t != TK_NUM)
+              {
+                rep = 0;
+                tokens[nr_token].str[rep] = *substr_start;
+              }else{
+                //上次匹配的结果也是TK_NUM，在上次的token对应的str中的对应位置写入
+                rep += 1;
+                tokens[nr_token-1].str[rep] = *substr_start; 
               }
-              //防止数字过长超过token.str中的长度
-              assert(position<32);
-              //复制后续匹配的字符串到token.str中
-               for(int t = start_position; t < position ;t++)
-                {
-                   tokens[nr_token].str[t-start_position] = *(e+t) ;
-                }
+              nr_token = nr_token + 1;
               break;
           default: 
               printf("Unkown token type!");
@@ -156,8 +164,6 @@ static bool make_token(char *e) {
         {
           break;
         }
-        //恢复计数器，重新匹配规则
-        i = 0;
       }
       if (i == NR_REGEX) {
         printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
