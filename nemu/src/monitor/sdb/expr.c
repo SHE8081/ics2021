@@ -183,6 +183,12 @@ word_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
+  Token *t = tokens;
+  while (t->str[0]!= '\0' )
+  {
+    printf("token type is %d and str is %s",t->type,t->str);
+  }
+  
   return  eval(&tokens[0],&tokens[nr_token]);
 }
 
