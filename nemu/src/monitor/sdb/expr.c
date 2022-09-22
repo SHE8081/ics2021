@@ -120,6 +120,8 @@ static bool make_token(char *e) {
         }
         tokens[nr_token].str[0] = *substr_start;
         nr_token = nr_token + 1;
+        //恢复计数器，重新匹配规则
+        i = 0;
       }
     }
     if (i == NR_REGEX) {
