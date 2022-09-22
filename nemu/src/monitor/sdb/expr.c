@@ -94,38 +94,69 @@ static bool make_token(char *e) {
 
         switch (rules[i].token_type) {
           case TK_NOTYPE:break;    
-          case TK_ADD:tokens[nr_token].type=TK_ADD;tokens[nr_token].prority=1; break;
-          case TK_ASSGIN :tokens[nr_token].type=TK_ASSGIN; break;
-          case TK_DIV : tokens[nr_token].type=TK_DIV;tokens[nr_token].prority=2;break;
-          case TK_EQ : tokens[nr_token].type=TK_EQ;break;
-          case TK_LP : tokens[nr_token].type=TK_LP;tokens[nr_token].prority=3; break;
-          case TK_MUL :tokens[nr_token].type=TK_MUL;tokens[nr_token].prority=2;break;
-          case TK_RP :tokens[nr_token].type=TK_RP;tokens[nr_token].prority=3;break;
-          case TK_SUB : tokens[nr_token].type=TK_SUB;tokens[nr_token].prority=1;break;
+          case TK_ADD:
+              tokens[nr_token].type=TK_ADD;tokens[nr_token].prority=1; 
+              tokens[nr_token].str[0] = *substr_start;
+              nr_token = nr_token + 1; break;
+          case TK_ASSGIN :
+              tokens[nr_token].type=TK_ASSGIN;
+              tokens[nr_token].str[0] = *substr_start;
+              nr_token = nr_token + 1;break;
+          case TK_DIV : 
+              tokens[nr_token].type=TK_DIV;tokens[nr_token].prority=2;
+              tokens[nr_token].str[0] = *substr_start;
+              nr_token = nr_token + 1;break;
+          case TK_EQ : 
+              tokens[nr_token].type=TK_EQ;
+              tokens[nr_token].str[0] = *substr_start;
+              nr_token = nr_token + 1;
+              break;
+          case TK_LP : 
+              tokens[nr_token].type=TK_LP;tokens[nr_token].prority=3; 
+              tokens[nr_token].str[0] = *substr_start;
+              nr_token = nr_token + 1;
+              break;
+          case TK_MUL :
+              tokens[nr_token].type=TK_MUL;tokens[nr_token].prority=2;
+              tokens[nr_token].str[0] = *substr_start;
+              nr_token = nr_token + 1;
+              break;
+          case TK_RP :
+              tokens[nr_token].type=TK_RP;tokens[nr_token].prority=3;
+              tokens[nr_token].str[0] = *substr_start;
+              nr_token = nr_token + 1;
+              break;
+          case TK_SUB :   
+              tokens[nr_token].type=TK_SUB;tokens[nr_token].prority=1;
+              tokens[nr_token].str[0] = *substr_start;
+              nr_token = nr_token + 1;
+              break;
           case TK_NUM : 
-            tokens[nr_token].type=TK_NUM;tokens[nr_token].prority=0;
-            //记录匹配开始的位置
-            int start_position = position;
-            //验证下一个位置是否是数字
-            while(regexec(&re[3], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0){
-             substr_len = pmatch.rm_eo;
-             position += substr_len ;
-            }
-            //防止数字过长超过token.str中的长度
-            assert(position<32);
-            //复制匹配的字符串到token.str中
-            for(int t = start_position ; t<position; t++){
-              tokens[nr_token].str[t] = *(e+t);
-            }
-            break;
-          default: printf("Unkown token type!");
+              tokens[nr_token].type=TK_NUM;tokens[nr_token].prority=0;
+              //记录匹配开始的位置
+              int start_position = position;
+              //验证下一个位置是否是数字
+              while(regexec(&re[3], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0){
+                substr_len = pmatch.rm_eo;
+                position += substr_len ;
+              }
+                //防止数字过长超过token.str中的长度
+              assert(position<32);
+              //复制匹配的字符串到token.str中
+              for(int t = start_position ; t<position; t++){
+                tokens[nr_token].str[t] = *(e+t);
+              }
+              break;
+          default: 
+              printf("Unkown token type!");
         }
-        tokens[nr_token].str[0] = *substr_start;
-        nr_token = nr_token + 1;
+        //遇到tokens结束标志，跳出规则匹配
+        if((*substr_start) == '\0')
+        {
+          break;
+        }
         //恢复计数器，重新匹配规则
         i = 0;
-        //跳转到下一个字符识别
-        continue;
       }
     }
     if (i == NR_REGEX) {
