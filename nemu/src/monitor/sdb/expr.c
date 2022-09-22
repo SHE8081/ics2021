@@ -64,6 +64,8 @@ typedef struct token {
 static Token tokens[32] __attribute__((used)) = {};
 static int nr_token __attribute__((used))  = 0;
 
+
+
 static bool make_token(char *e) {
   int position = 0;
   int i;
@@ -98,10 +100,25 @@ static bool make_token(char *e) {
           case TK_MUL :tokens[nr_token].type=TK_MUL;tokens[nr_token].prority=2;break;
           case TK_RP :tokens[nr_token].type=TK_RP;tokens[nr_token].prority=3;break;
           case TK_SUB : tokens[nr_token].type=TK_SUB;tokens[nr_token].prority=1;break;
-          case TK_NUM : tokens[nr_token].type=TK_NUM;tokens[nr_token].prority=0;break; 
+          case TK_NUM : 
+            tokens[nr_token].type=TK_NUM;tokens[nr_token].prority=0;
+            //记录匹配开始的位置
+            int start_position = position;
+            //验证下一个位置是否是数字
+            while(regexec(&re[3], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0){
+             substr_len = pmatch.rm_eo;
+             position += substr_len ;
+            }
+            //防止数字过长超过token.str中的长度
+            assert(position<32);
+            //复制匹配的字符串到token.str中
+            for(int t = start_position ; t<position; t++){
+              tokens[nr_token].str[t] = *(e+t);
+            }
+            break;
           default: printf("Unkown token type!");
         }
-        strcpy(tokens[nr_token].str,substr_start);
+        tokens[nr_token].str[0] = *substr_start;
         nr_token = nr_token + 1;
       }
     }
@@ -217,7 +234,7 @@ Token * find_main_op (Token *p, Token *q){
     }
   }
   if(p!=q){
-    printf("为寻找到主运算符!");
+    printf("未寻找到主运算符!");
     assert(p!=q);
   }
   return p;
