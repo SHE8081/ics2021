@@ -159,10 +159,10 @@ static bool make_token(char *e) {
         //恢复计数器，重新匹配规则
         i = 0;
       }
-    }
-    if (i == NR_REGEX) {
-      printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
-      return false;
+      if (i == NR_REGEX) {
+        printf("no match at position %d\n%s\n%*.s^\n", position, e, position, "");
+        return false;
+      }
     }
   }
   return true;
