@@ -143,12 +143,10 @@ static bool make_token(char *e) {
               //防止数字过长超过token.str中的长度
               assert(position<32);
               //复制后续匹配的字符串到token.str中
-              for(int str_i=0 ; str_i <32;str_i++){
-                 for(int t = start_position; t < position ;t++)
-                 {
-                   tokens[nr_token].str[str_i] = *(e+t) ;
-                 }
-              }
+               for(int t = start_position; t < position ;t++)
+                {
+                   tokens[nr_token].str[t-start_position] = *(e+t) ;
+                }
               break;
           default: 
               printf("Unkown token type!");
