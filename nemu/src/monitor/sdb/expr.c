@@ -140,10 +140,10 @@ static bool make_token(char *e) {
                 substr_len = pmatch.rm_eo;
                 position += substr_len ;
               }
-                //防止数字过长超过token.str中的长度
+              //防止数字过长超过token.str中的长度
               assert(position<32);
               //复制匹配的字符串到token.str中
-              for(int t = start_position ; t<position; t++){
+              for(int t = start_position ; t<=position; t++){
                 tokens[nr_token].str[t] = *(e+t);
               }
               break;
