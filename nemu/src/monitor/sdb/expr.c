@@ -124,6 +124,8 @@ static bool make_token(char *e) {
         nr_token = nr_token + 1;
         //恢复计数器，重新匹配规则
         i = 0;
+        //跳转到下一个字符识别
+        continue;
       }
     }
     if (i == NR_REGEX) {
