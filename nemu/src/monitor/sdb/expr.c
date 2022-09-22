@@ -154,6 +154,7 @@ static bool make_token(char *e) {
                 rep += 1;
                 tokens[nr_token-1].str[rep] = *substr_start; 
               }
+              pre_t = TK_NUM;
               nr_token = nr_token + 1;
               break;
           default: 
