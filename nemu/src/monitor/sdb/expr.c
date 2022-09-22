@@ -32,6 +32,8 @@ static struct rule {
   {"[0-9]",TK_NUM},     // number
   {"\\(",TK_LP},         //(
   {"\\)",TK_RP},         //)  
+  {"\\*",TK_MUL},        //*
+  {"\\/",TK_DIV},       // chu
 };
 
 #define NR_REGEX ARRLEN(rules)
