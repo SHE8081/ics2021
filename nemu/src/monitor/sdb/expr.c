@@ -144,9 +144,9 @@ static bool make_token(char *e) {
               nr_token = nr_token + 1;
               break;
           case TK_NUM : 
-              tokens[nr_token].type=TK_NUM;tokens[nr_token].prority=0;
               if (pre_t != TK_NUM)
               {
+                tokens[nr_token].type=TK_NUM;tokens[nr_token].prority=0;
                 rep = 0;
                 tokens[nr_token].str[rep] = *substr_start;
               }else{
