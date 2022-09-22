@@ -133,9 +133,8 @@ static bool make_token(char *e) {
               break;
           case TK_NUM : 
               tokens[nr_token].type=TK_NUM;tokens[nr_token].prority=0;
-              tokens[nr_token].str[0] = *(e+position);
               //记录后续匹配开始的位置
-              int start_position = position;;
+              int start_position = position-substr_len;
               //验证下一个位置是否是数字
               while(regexec(&re[3], e + position, 1, &pmatch, 0) == 0 && pmatch.rm_so == 0){
                 substr_len = pmatch.rm_eo;
@@ -144,15 +143,18 @@ static bool make_token(char *e) {
               //防止数字过长超过token.str中的长度
               assert(position<32);
               //复制后续匹配的字符串到token.str中
-              for(int t = start_position ; t<=position; t++){
-                tokens[nr_token].str[t] = *(e+t);
+              for(int str_i=0 ; str_i <32;str_i++){
+                 for(int t = start_position; t < position ;t++)
+                 {
+                   tokens[nr_token].str[str_i] = *(e+t) ;
+                 }
               }
               break;
           default: 
               printf("Unkown token type!");
         }
         //遇到tokens结束标志，跳出规则匹配
-        if((*substr_start) == '\0')
+        if(*(e+position) == '\0')
         {
           break;
         }
