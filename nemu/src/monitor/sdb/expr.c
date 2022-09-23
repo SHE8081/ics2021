@@ -184,7 +184,7 @@ word_t expr(char *e, bool *success) {
     return 0;
   }
   for(int t=0 ; t<nr_token ;t++){
-    printf("%d        %s\n",tokens[t].type,tokens->str);
+    printf("%d<--------->%s\n",tokens[t].type,tokens[t].str);
   }
   return  eval(&tokens[0],&tokens[nr_token]);
 }
