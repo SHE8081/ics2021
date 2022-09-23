@@ -187,7 +187,7 @@ word_t expr(char *e, bool *success) {
   for(int t=0 ; t<nr_token ;t++){
     printf("%d<--------->%s\n",tokens[t].type,tokens[t].str);
   }
-  return  eval(&tokens[0],&tokens[nr_token]);
+  return  eval(tokens,tokens+nr_token);
 }
 
 bool check_parentheses(Token *p, Token *q){
@@ -266,16 +266,10 @@ Token * find__from_right(Token *t){
 Token * find_main_op (Token *p, Token *q){
   if(p->prority >= q->prority){
     p = p + 1;
-    find__from_left(p);
-    if(p != q){
-     find_main_op(p,q); 
-    }
+    find_main_op(p, q);
   }else{
     q = q - 1;
-    find__from_right(q);
-    if(p != q){
-      find_main_op(p,q);
-    }
+    find_main_op(p,q);
   }
   if(p!=q){
     printf("未寻找到主运算符!");
