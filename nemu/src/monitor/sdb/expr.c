@@ -183,13 +183,16 @@ word_t expr(char *e, bool *success) {
     *success = false;
     return 0;
   }
+  for(int t=0 ; t<nr_token ;t++){
+    printf("%d        %s\n",tokens[t].type,tokens->str);
+  }
   return  eval(&tokens[0],&tokens[nr_token]);
 }
 
 bool check_parentheses(Token *p, Token *q){
  while(p->type==TK_RP && p->type==TK_RP)
  {
-   p = p-1;
+   p = p-1; 
    q = q-1;
  } 
  if(p == q){
