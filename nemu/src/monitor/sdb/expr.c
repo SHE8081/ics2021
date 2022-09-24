@@ -248,7 +248,7 @@ Token * find_main_op (Token *p, Token *q){
   int count=0;
   int tmp_t=10;
   Token *tmp_p=NULL;
-  while (p != q){
+  while (p <= q){
      if(q->type==TK_RP){
         count = count -1;    
       }
