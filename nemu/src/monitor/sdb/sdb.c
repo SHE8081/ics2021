@@ -89,6 +89,7 @@ static int cmd_p(char *args){
   word_t result= expr(args,&success);
   if(success == true){
     printf("expr's value is %d",result);
+    return 0;
   }
   return -1;
 }
