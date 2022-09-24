@@ -187,7 +187,7 @@ word_t expr(char *e, bool *success) {
   for(int t=0 ; t<nr_token ;t++){
     printf("%d<--------->%s\n",tokens[t].type,tokens[t].str);
   }
-  return  eval(tokens,tokens+nr_token);
+  return  eval(tokens,tokens+nr_token-1);
 }
 
 bool check_parentheses(Token *p, Token *q){
