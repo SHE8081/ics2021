@@ -191,15 +191,14 @@ word_t expr(char *e, bool *success) {
 }
 
 bool check_parentheses(Token *p, Token *q){
- while(p->type==TK_RP && p->type==TK_RP)
+if(p->type==TK_RP && p->type==TK_RP)
  {
-   p = p-1; 
-   q = q-1;
- } 
- if(p == q){
    return true;
- }else
-  return false;
+ } 
+ else{
+   Log("Parentheses can not pairs!");
+   return false;
+ }
 }
 
 Token *  find_main_op(Token * ,Token*);
@@ -238,42 +237,40 @@ uint32_t eval(Token *p ,Token *q){
 }
 
 /**
- * @brief 从左边查找第一个运算符
- * 返回运算符地址
- */
-Token * find__from_left(Token *t){
-  if (t->type >= TK_ADD && t->type<=TK_DIV)
-  {
-    return t;
-  }
-  else
-    return t+1;  
-}
-
-/**
- * @brief 从右边查找第一个运算符
- * 返回运算符地址
- */
-Token * find__from_right(Token *t){
-  if (t->type >= TK_ADD && t->type<=TK_DIV)
-  {
-    return t;
-  }
-  else
-    return t-1;  
-}
-
+ * @brief fing main_op from end of tokens to start
+ * p start of tokens
+ * q end of tokens
+ * count is counters of parentheses ,if value is 0 means parentheses pairs
+ * tmp_t records small prority
+ * tmp_p records the positon of token
+ *  */
 Token * find_main_op (Token *p, Token *q){
-  if(p->prority >= q->prority){
-    p = p + 1;
-    find_main_op(p, q);
-  }else{
+  int count=0;
+  int tmp_t=10;
+  Token *tmp_p=NULL;
+  while (p != q){
+    if(count == 0){
+        if(q->type >= TK_ADD && q->type<= TK_DIV)
+        {
+          if(q->prority < tmp_t){
+            tmp_t = q->prority;
+            tmp_p = q;
+          }
+        }
+    }
+    else{
+      if(q->type==TK_RP){
+        count = count -1;    
+      }
+      if(q->type==TK_LP){
+        count = count + 1;
+      }
+    }
     q = q - 1;
-    find_main_op(p,q);
   }
-  if(p!=q){
-    printf("未寻找到主运算符!");
-    assert(p!=q);
+  if(count != 0){
+    Log("Parentheses can not pairs!");
+    assert(0);
   }
-  return p;
+  return tmp_p;
 }
