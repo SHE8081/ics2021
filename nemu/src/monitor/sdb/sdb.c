@@ -86,9 +86,9 @@ static int cmd_x(char *args){
 static int cmd_p(char *args){
   assert(NULL != args);
   bool success= true;
-  expr(args,&success);
+  word_t result= expr(args,&success);
   if(success == true){
-    return 0;
+    printf("expr's value is %d",result);
   }
   return -1;
 }
