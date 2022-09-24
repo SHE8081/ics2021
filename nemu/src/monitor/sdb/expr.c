@@ -249,6 +249,12 @@ Token * find_main_op (Token *p, Token *q){
   int tmp_t=10;
   Token *tmp_p=NULL;
   while (p != q){
+     if(q->type==TK_RP){
+        count = count -1;    
+      }
+      if(q->type==TK_LP){
+        count = count + 1;
+      }
     if(count == 0){
         if(q->type >= TK_ADD && q->type<= TK_DIV)
         {
@@ -257,15 +263,7 @@ Token * find_main_op (Token *p, Token *q){
             tmp_p = q;
           }
         }
-    }
-    else{
-      if(q->type==TK_RP){
-        count = count -1;    
       }
-      if(q->type==TK_LP){
-        count = count + 1;
-      }
-    }
     q = q - 1;
   }
   if(count != 0){
