@@ -191,7 +191,7 @@ word_t expr(char *e, bool *success) {
 }
 
 bool check_parentheses(Token *p, Token *q){
-if(p->type==TK_RP && p->type==TK_RP)
+if(p->type==TK_LP && q->type==TK_RP)
  {
    return true;
  } 
